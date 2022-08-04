@@ -1,86 +1,65 @@
 import './css/styles.css';
+import { fetchPhoto } from './js/fetchPhoto';
 import Notiflix from 'notiflix';
 
 Notiflix.Notify.init({
   timeout: 1000,
 });
 
-const refs = {
-  inputForm: document.querySelector('#search-form'),
-  btnForm: document.querySelector('type="submit"'),
+const inputForm = document.querySelector('#search-form');
+const gallery = document.querySelector('.gallery');
+const readingInput = event => {
+  event.preventDefault();
+  let formElements = event.currentTarget.elements;
+  let searchQuery = formElements.searchQuery.value.trim();
+
+  if (searchQuery === '') {
+    return;
+  }
+  fetchPhoto(searchQuery)
+    .then(data => {
+      if (data.status === 404) {
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+        return;
+      }
+      renderingPhoto(data.hits);
+    })
+
+    .catch(error => {
+      console.log('no', error);
+    });
 };
 
-// const importText = () => {
-//   if (refs.input.value === '') {
-//     clearList();
-//     return;
-//   }
+inputForm.addEventListener('submit', readingInput);
 
-//   let name = refs.input.value.trim();
-//   fetchCountries(name)
-//     .then(data => {
-//       if (data.status === 404) {
-//         clearList();
-//         Notiflix.Notify.failure('Oops, there is no country with that name');
-//         return;
-//       }
-//       if (data.length > 10) {
-//         clearList();
-//         Notiflix.Notify.info(
-//           'Too many matches found. Please enter a more specific name.'
-//         );
-//         return;
-//       }
-//       insertContent(data);
-//     })
-//     .catch(error => {
-//       console.log('no', error);
-//     });
-// };
+const createList = item =>
+  `<div class="photo-card">
+  <img src="${item.webformatURL}" alt="" loading="lazy" width= "300"; />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes</b>
+      ${item.likes}
+    </p>
+    <p class="info-item">
+      <b>Views</b>
+      ${item.views}
+    </p>
+    <p class="info-item">
+      <b>Comments</b>
+      ${item.comments}
+    </p>
+    <p class="info-item">
+      <b>Downloads</b>
+      ${item.downloads}
+    </p>
+  </div>
+</div>`;
 
-// refs.input.addEventListener('input', debounce(importText, DEBOUNCE_DELAY));
+const generateContentList = array => {
+  return array?.reduce((acc, item) => acc + createList(item), '');
+};
 
-// const createList = item =>
-//   `<li class="item">
-//     <img src = ${item.flags.svg} alt = ${item.name.common} width = 30>
-//     ${item.name.official}
-//   </li>`;
-
-// const createListInfo = item =>
-//   `<p><span style= "font-size: 24px; font-weight: 500;">Capital: </span>${
-//     item.capital
-//   }</p>
-//   <p><span style= "font-size: 24px; font-weight: 500;">Population: </span>${
-//     item.population
-//   }</p>
-//   <p><span style= "font-size: 24px; font-weight: 500;">Languages: </span>${Object.values(
-//     item.languages
-//   )}</p>`;
-
-// const generateContentList = array => {
-//   const listStyle = 'font-size: 20px; font-weight: 500';
-//   const itemStyle = 'font-size: 30px; font-weight: 700';
-
-//   refs.info.setAttribute('style', 'font-size: 20px; font-weight: 400');
-//   refs.list.setAttribute(
-//     'style',
-//     `list-style-type: none; padding: 0; margin: 0; ${
-//       array.length > 1 ? listStyle : itemStyle
-//     }`
-//   );
-//   return array?.reduce((acc, item) => acc + createList(item), '');
-// };
-
-// const generateContentItemInfo = array => {
-//   return array?.reduce((acc, item) => acc + createListInfo(item), '');
-// };
-
-// const insertContent = array => {
-//   const resultList = generateContentList(array);
-//   refs.list.innerHTML = resultList;
-//   refs.info.innerHTML = '';
-//   if (array.length === 1) {
-//     const resultItemInfo = generateContentItemInfo(array);
-//     refs.info.innerHTML = resultItemInfo;
-//   }
-// };
+const renderingPhoto = array => {
+  const resultList = generateContentList(array);
+  gallery.innerHTML = resultList;
+};

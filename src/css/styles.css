@@ -12,9 +12,30 @@ body {
   line-height: 1.5;
 }
 
-#search-box {
+#search-form {
   font: inherit;
   padding: 8px;
   max-width: 320px;
   margin-bottom: 16px;
+}
+
+/*gallery*/
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  width: 300px;
+}
+
+.photo-card:not(:last-child) {
+  margin-right: 17px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+}
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
