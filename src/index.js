@@ -7,7 +7,7 @@ Notiflix.Notify.init({
 });
 
 const inputForm = document.querySelector('#search-form');
-const gallery = document.querySelector('.gallery');
+const gallery = document.querySelector('.gallery-box');
 const readingInput = event => {
   event.preventDefault();
   let formElements = event.currentTarget.elements;
@@ -34,7 +34,7 @@ inputForm.addEventListener('submit', readingInput);
 
 const createList = item =>
   `<div class="photo-card">
-  <img src="${item.webformatURL}" alt="" loading="lazy" width= "300"; />
+  <img src="${item.webformatURL}" alt="" loading="lazy"  width= "100%" height= "200" />
   <div class="info">
     <p class="info-item">
       <b>Likes</b>

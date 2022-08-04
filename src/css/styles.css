@@ -11,28 +11,91 @@ body {
   color: #212121;
   line-height: 1.5;
 }
+h2,
+h3,
+h4,
+h5 {
+  font-size: 100%;
+  font-weight: normal;
+}
 
-#search-form {
-  font: inherit;
+.list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.search-form {
+  text-align: center;
   padding: 8px;
-  max-width: 320px;
-  margin-bottom: 16px;
+
+  background-color: #1c42ba;
+}
+
+.search-form input,
+.search-form button {
+  height: 40px;
+  border-radius: 3px;
 }
 
 /*gallery*/
+
 .gallery {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media screen and (min-width: 480px) {
+  .gallery {
+    width: 480px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .gallery {
+    width: 768px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .gallery {
+    width: 1600px;
+  }
+}
+
+.gallery-box {
   display: flex;
   flex-wrap: wrap;
-  width: 300px;
+  margin-top: 15px;
+  margin-left: -30px;
+  margin-bottom: -30px;
 }
 
-.photo-card:not(:last-child) {
-  margin-right: 17px;
+.photo-card {
+  margin-left: 30px;
+  margin-bottom: 30px;
+  flex-basis: 100%;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.12), 0px 4px 4px rgba(0, 0, 0, 0.06),
+    1px 4px 6px rgba(0, 0, 0, 0.16);
 }
 
+@media screen and (min-width: 768px) {
+  .photo-card {
+    flex-basis: calc(50% - 30px);
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .photo-card {
+    flex-basis: calc(100% / 4 - 30px);
+  }
+}
 .info {
   display: flex;
   align-items: center;
+  justify-content: space-evenly;
 }
 .info-item {
   display: flex;
