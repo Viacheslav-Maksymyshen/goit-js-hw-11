@@ -3,6 +3,9 @@ import './css/styles.css';
 import { fetchPhoto } from './js/fetchPhoto';
 import Notiflix from 'notiflix';
 
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 Notiflix.Notify.init({
   timeout: 1000,
 });
@@ -35,7 +38,9 @@ inputForm.addEventListener('submit', readingInput);
 
 const createList = item =>
   `<div class="photo-card">
-  <img src="${item.webformatURL}" alt="" loading="lazy"  width= "100%" height= "200" />
+  <a class="gallery__link" href="${item.webformatURL}">
+  <img src="${item.webformatURL}" class="photo-img" alt="" loading="lazy"   height= "200" />
+  </a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
@@ -64,3 +69,17 @@ const renderingPhoto = array => {
   const resultList = generateContentList(array);
   gallery.innerHTML = resultList;
 };
+
+let modal = new SimpleLightbox('.photo-card', {
+  captionsData: 'alt',
+  captionDelay: 250,
+  captionPosition: 'bottom',
+});
+
+modal.on('show.simplelightbox', function () {
+  console.log('ok');
+});
+
+modal.on('error.simplelightbox', function () {
+  console.log('error');
+});
