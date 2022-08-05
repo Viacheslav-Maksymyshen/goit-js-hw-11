@@ -1,4 +1,5 @@
 import './css/styles.css';
+
 import { fetchPhoto } from './js/fetchPhoto';
 import Notiflix from 'notiflix';
 
