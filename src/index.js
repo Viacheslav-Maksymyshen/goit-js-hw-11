@@ -8,7 +8,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 Notiflix.Notify.init({
-  timeout: 1000,
+  timeout: 4000,
 });
 
 const inputForm = document.querySelector('#search-form');
@@ -23,8 +23,10 @@ const readingInput = event => {
   }
   fetchPhoto(searchQuery)
     .then(data => {
-      if (data.status === 404) {
-        Notiflix.Notify.failure('Oops, there is no country with that name');
+      if (data.hits.length < 1) {
+        Notiflix.Notify.failure(
+          '"Sorry, there are no images matching your search query. Please try again."'
+        );
         return;
       }
       renderingPhoto(data.hits);
