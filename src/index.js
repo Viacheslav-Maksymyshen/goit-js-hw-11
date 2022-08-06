@@ -70,7 +70,7 @@ const renderingPhoto = array => {
   gallery.innerHTML = resultList;
 };
 
-let modal = new SimpleLightbox('.photo-card', {
+let modal = new SimpleLightbox('.gallery-box a', {
   captionsData: 'alt',
   captionDelay: 250,
   captionPosition: 'bottom',
