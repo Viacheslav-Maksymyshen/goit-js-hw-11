@@ -12,6 +12,7 @@ Notiflix.Notify.init({
 });
 
 const inputForm = document.querySelector('#search-form');
+const loadMoreBtn = document.querySelector('[data-action="Load-more"]');
 
 const readingInput = event => {
   event.preventDefault();
@@ -52,3 +53,4 @@ const readingInput = event => {
 };
 
 inputForm.addEventListener('submit', readingInput);
+loadMoreBtn.addEventListener('click');
