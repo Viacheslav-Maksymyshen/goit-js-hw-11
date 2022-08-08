@@ -13,16 +13,23 @@ Notiflix.Notify.init({
 
 const inputForm = document.querySelector('#search-form');
 const loadMoreBtn = document.querySelector('[data-action="Load-more"]');
+const gallery = document.querySelector('.gallery-box');
+
+let searchQuery = '';
+let modal;
+let page = 1;
 
 const readingInput = event => {
   event.preventDefault();
+  page = 1;
   let formElements = event.currentTarget.elements;
-  let searchQuery = formElements.searchQuery.value.trim();
-
+  searchQuery = formElements.searchQuery.value.trim();
+  gallery.innerHTML = '';
   if (searchQuery === '') {
     return;
   }
-  fetchPhoto(searchQuery)
+
+  fetchPhoto(searchQuery, page)
     .then(data => {
       if (data.hits.length < 1) {
         Notiflix.Notify.failure(
@@ -32,19 +39,11 @@ const readingInput = event => {
       }
       renderingPhoto(data.hits);
 
-      let modal = new SimpleLightbox('.gallery-box a', {
+      modal = new SimpleLightbox('.gallery-box a', {
         captionsData: 'alt',
         captionDelay: 250,
         captionPosition: 'bottom',
       }).refresh();
-
-      modal.on('show.simplelightbox', function () {
-        console.log('ok');
-      });
-
-      modal.on('error.simplelightbox', function () {
-        console.log('error');
-      });
     })
 
     .catch(error => {
@@ -53,4 +52,27 @@ const readingInput = event => {
 };
 
 inputForm.addEventListener('submit', readingInput);
-loadMoreBtn.addEventListener('click');
+
+const LoadMorePhoto = () => {
+  page += 1;
+  modal.destroy();
+  if (searchQuery === '') {
+    return;
+  }
+  fetchPhoto(searchQuery, page)
+    .then(data => {
+      renderingPhoto(data.hits);
+
+      modal = new SimpleLightbox('.gallery-box a', {
+        captionsData: 'alt',
+        captionDelay: 250,
+        captionPosition: 'bottom',
+      }).refresh();
+    })
+
+    .catch(error => {
+      console.log('no', error);
+    });
+};
+
+loadMoreBtn.addEventListener('click', LoadMorePhoto);

@@ -38,7 +38,7 @@ const generateContentList = array => {
 
 const renderingPhoto = array => {
   const resultList = generateContentList(array);
-  gallery.innerHTML = resultList;
+  gallery.insertAdjacentHTML('beforeend', resultList);
 };
 
 export { renderingPhoto };
