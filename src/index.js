@@ -1,7 +1,8 @@
-import './css/styles.css';
+// import './css/styles.css';
 
 import { fetchPhoto } from './js/fetchPhoto';
 import { renderingPhoto } from './js/renderPhoto';
+import { onScroll, onToTopBtn } from './js/scroll';
 
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
@@ -12,15 +13,18 @@ Notiflix.Notify.init({
 });
 
 const inputForm = document.querySelector('#search-form');
-const loadMoreBtn = document.querySelector('[data-action="Load-more"]');
 const gallery = document.querySelector('.gallery-box');
 
 let searchQuery = '';
 let modal;
 let page = 1;
 
+onScroll();
+onToTopBtn();
+
 const readingInput = event => {
   event.preventDefault();
+  window.scrollTo({ top: 0 });
   page = 1;
   let formElements = event.currentTarget.elements;
   searchQuery = formElements.searchQuery.value.trim();
@@ -43,6 +47,12 @@ const readingInput = event => {
         captionDelay: 250,
         captionPosition: 'bottom',
       }).refresh();
+
+      const lastCard = document.querySelector('.photo-card:last-child');
+      if (lastCard) {
+        infinteObserver.observe(lastCard);
+      }
+
       alertImagesFound(data);
     })
 
@@ -53,26 +63,19 @@ const readingInput = event => {
 
 inputForm.addEventListener('submit', readingInput);
 
-const infinteObserver = new IntersectionObserver(
-  ([entry], observer) => {
-    // проверяем что достигли последнего элемента
-    if (entry.isIntersecting) {
-      // перестаем его отслеживать
-      observer.unobserve(entry.target);
-      // и загружаем новую порцию контента
-      LoadMorePhoto();
-    }
-  },
-  { threshold: 0.5 }
-);
-
 const LoadMorePhoto = () => {
   page += 1;
-  modal.destroy();
 
   fetchPhoto(searchQuery, page)
     .then(({ data }) => {
+      if (data.hits < 40) {
+        endOfSearch();
+        return;
+      }
+
       renderingPhoto(data.hits);
+
+      modal.destroy();
 
       modal = new SimpleLightbox('.gallery-box a', {
         captionsData: 'alt',
@@ -100,7 +103,18 @@ const LoadMorePhoto = () => {
     });
 };
 
-loadMoreBtn.addEventListener('click', LoadMorePhoto);
+const infinteObserver = new IntersectionObserver(
+  ([entry], observer) => {
+    // перевірка останього елемента
+    if (entry.isIntersecting) {
+      // перестаємо його відслідковувати
+      observer.unobserve(entry.target);
+      // Завантажуємо нову порцію контенту
+      LoadMorePhoto();
+    }
+  },
+  { threshold: 0.5 }
+);
 
 const alertImagesFound = data =>
   Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
