@@ -26,15 +26,14 @@ const readingInput = event => {
   searchQuery = formElements.searchQuery.value.trim();
   gallery.innerHTML = '';
   if (searchQuery === '') {
+    noEmptySearch();
     return;
   }
 
   fetchPhoto(searchQuery, page)
-    .then(data => {
+    .then(({ data }) => {
       if (data.hits.length < 1) {
-        Notiflix.Notify.failure(
-          '"Sorry, there are no images matching your search query. Please try again."'
-        );
+        noImagesFound();
         return;
       }
       renderingPhoto(data.hits);
@@ -44,6 +43,7 @@ const readingInput = event => {
         captionDelay: 250,
         captionPosition: 'bottom',
       }).refresh();
+      alertImagesFound(data);
     })
 
     .catch(error => {
@@ -53,14 +53,25 @@ const readingInput = event => {
 
 inputForm.addEventListener('submit', readingInput);
 
+const infinteObserver = new IntersectionObserver(
+  ([entry], observer) => {
+    // проверяем что достигли последнего элемента
+    if (entry.isIntersecting) {
+      // перестаем его отслеживать
+      observer.unobserve(entry.target);
+      // и загружаем новую порцию контента
+      LoadMorePhoto();
+    }
+  },
+  { threshold: 0.5 }
+);
+
 const LoadMorePhoto = () => {
   page += 1;
   modal.destroy();
-  if (searchQuery === '') {
-    return;
-  }
+
   fetchPhoto(searchQuery, page)
-    .then(data => {
+    .then(({ data }) => {
       renderingPhoto(data.hits);
 
       modal = new SimpleLightbox('.gallery-box a', {
@@ -68,6 +79,20 @@ const LoadMorePhoto = () => {
         captionDelay: 250,
         captionPosition: 'bottom',
       }).refresh();
+
+      const lastCard = document.querySelector('.photo-card:last-child');
+      if (lastCard) {
+        infinteObserver.observe(lastCard);
+      }
+
+      const { height: cardHeight } = document
+        .querySelector('.gallery-box')
+        .firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
     })
 
     .catch(error => {
@@ -76,3 +101,18 @@ const LoadMorePhoto = () => {
 };
 
 loadMoreBtn.addEventListener('click', LoadMorePhoto);
+
+const alertImagesFound = data =>
+  Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+
+const noImagesFound = () =>
+  Notiflix.Notify.failure(
+    '"Sorry, there are no images matching your search query. Please try again."'
+  );
+const noEmptySearch = () =>
+  Notiflix.Notify.failure('The search field must be filled');
+
+const endOfSearch = () =>
+  Notiflix.Notify.failure(
+    "We're sorry, but you've reached the end of search results."
+  );

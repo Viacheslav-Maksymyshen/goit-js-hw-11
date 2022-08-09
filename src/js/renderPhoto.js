@@ -7,10 +7,11 @@ const createList = ({
   views,
   comments,
   downloads,
+  tags,
 }) =>
   `<div class="photo-card">
   <a class="gallery__link" href="${largeImageURL}">
-  <img src="${webformatURL}" class="photo-img" alt="" loading="lazy"   height= "200" />
+  <img src="${webformatURL}" class="photo-img" alt="${tags}" loading="lazy"   height= "200" />
   </a>
   <div class="info">
     <p class="info-item">
