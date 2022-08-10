@@ -41,18 +41,8 @@ const readingInput = event => {
         return;
       }
       renderingPhoto(data.hits);
-
-      modal = new SimpleLightbox('.gallery-box a', {
-        captionsData: 'alt',
-        captionDelay: 250,
-        captionPosition: 'bottom',
-      }).refresh();
-
-      const lastCard = document.querySelector('.photo-card:last-child');
-      if (lastCard) {
-        infinteObserver.observe(lastCard);
-      }
-
+      Lightbox();
+      infinteScroll();
       alertImagesFound(data);
     })
 
@@ -72,35 +62,42 @@ const LoadMorePhoto = () => {
         endOfSearch();
         return;
       }
-
       renderingPhoto(data.hits);
-
       modal.destroy();
-
-      modal = new SimpleLightbox('.gallery-box a', {
-        captionsData: 'alt',
-        captionDelay: 250,
-        captionPosition: 'bottom',
-      }).refresh();
-
-      const lastCard = document.querySelector('.photo-card:last-child');
-      if (lastCard) {
-        infinteObserver.observe(lastCard);
-      }
-
-      const { height: cardHeight } = document
-        .querySelector('.gallery-box')
-        .firstElementChild.getBoundingClientRect();
-
-      window.scrollBy({
-        top: cardHeight * 2,
-        behavior: 'smooth',
-      });
+      Lightbox();
+      infinteScroll();
+      smooth();
     })
 
     .catch(error => {
       console.log('no', error);
     });
+};
+
+const Lightbox = () => {
+  modal = new SimpleLightbox('.gallery-box a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+    captionPosition: 'bottom',
+  }).refresh();
+};
+
+const infinteScroll = () => {
+  const lastCard = document.querySelector('.photo-card:last-child');
+  if (lastCard) {
+    infinteObserver.observe(lastCard);
+  }
+};
+
+const smooth = () => {
+  const { height: cardHeight } = document
+    .querySelector('.gallery-box')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 };
 
 const infinteObserver = new IntersectionObserver(
